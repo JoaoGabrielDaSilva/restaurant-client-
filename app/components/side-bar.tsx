@@ -12,7 +12,7 @@ type RouteProps = {
 
 const routes: Omit<RouteProps, "isActive">[] = [
   {
-    name: "Controle",
+    name: "Dashboard",
     route: "/dashboard",
   },
   {
