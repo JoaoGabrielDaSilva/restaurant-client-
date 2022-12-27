@@ -2,8 +2,7 @@
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 type RouteProps = {
   name: string;
@@ -24,29 +23,16 @@ const routes: Omit<RouteProps, "isActive">[] = [
 
 export default function Sidebar() {
   const pathName = usePathname();
-  const { push } = useRouter();
-
-  const [visibility, setVisibility] = useState(true);
-
-  const toggleSideBar = () => setVisibility((prevState) => !prevState);
 
   return (
     <div
-      className={classNames(
-        "flex justify-center h-screen 3s ease-in-out duration-200 "
-      )}
+      className={
+        "hidden md:block max-w-[15vw] min-w-fit flex-grow h-screen border-r border-gray-200"
+      }
     >
-      <div
-        className={classNames(
-          visibility ? "" : "",
-          "h-full border-r border-gray-100 fixed top-0 left-0 z-20"
-        )}
-      >
-        {routes?.map((route) => (
-          <Route isActive={route.route === pathName} {...route} />
-        ))}
-      </div>
-      <div className="w-4 h-4 bg-red-500 self-center" onClick={toggleSideBar} />
+      {routes?.map((route, index) => (
+        <Route key={index} isActive={route.route === pathName} {...route} />
+      ))}
     </div>
   );
 }

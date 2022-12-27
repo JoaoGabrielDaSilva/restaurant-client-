@@ -1,4 +1,5 @@
 import Sidebar from "../components/side-bar";
+import WarningBar from "../components/warning-bar";
 
 export default function RootLayout({
   children,
@@ -11,7 +12,10 @@ export default function RootLayout({
       <body>
         <div className="flex">
           <Sidebar />
-          {children}
+          <div className="w-full">
+            <WarningBar />
+            {children}
+          </div>
         </div>
       </body>
     </html>

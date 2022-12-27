@@ -1,5 +1,7 @@
+"use client";
+
 const Page = () => {
-  return <h1>dashboard</h1>;
+  return <div className="p-12"></div>;
 };
 
 export default Page;
