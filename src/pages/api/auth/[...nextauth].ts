@@ -5,8 +5,9 @@ import { RemoteSignIn } from "../../../@core/data/use-cases/auth/remote-sign-in"
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "credentials",
       type: "credentials",
+      id: "credentials",
+      name: "credentials",
       credentials: {},
 
       async authorize(_, req) {
@@ -35,11 +36,9 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
+  logger: { debug: (code, meta) => console.log(code, meta) },
   pages: {
-    signIn: "auth/sign-in",
+    signIn: "/auth/sign-in",
   },
 };
 export default NextAuth(authOptions);

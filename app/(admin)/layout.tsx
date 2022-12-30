@@ -7,17 +7,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <head />
-      <body>
-        <div className="flex">
-          <Sidebar />
-          <div className="w-full">
-            <WarningBar />
-            {children}
-          </div>
-        </div>
-      </body>
-    </html>
+    <div className="flex">
+      <Sidebar />
+      <div className="w-full">{children}</div>
+    </div>
   );
 }

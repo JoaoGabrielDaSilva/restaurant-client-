@@ -1,15 +1,16 @@
 "use client";
 
 import classNames from "classnames";
+import { useState } from "react";
 
 const STATUS_CONFIGS = {
   "requesting waiter": {
-    background: "#faf7f0",
+    background: "bg-[#faf7f0]",
     textColor: "text-orange-400",
     message: "Solicitando Garçom",
   },
   "waiting for closure": {
-    background: "#eaf3f0",
+    background: "bg-[#eaf3f0]",
     textColor: "text-green-600",
     message: "Aguardando Fechamento",
   },
@@ -33,35 +34,52 @@ const warnings = [
   },
   {
     status: "waiting for closure",
-    table: "Mesa 02",
+    table: "Mesa 04",
     ...STATUS_CONFIGS["waiting for closure"],
   },
   {
     status: "requesting waiter",
-    table: "Mesa 03",
+    table: "Mesa 05",
     ...STATUS_CONFIGS["requesting waiter"],
   },
   {
     status: "requesting waiter",
-    table: "Mesa 03",
+    table: "Mesa 06",
     ...STATUS_CONFIGS["requesting waiter"],
   },
   {
     status: "requesting waiter",
-    table: "Mesa 03",
+    table: "Mesa 07",
+    ...STATUS_CONFIGS["requesting waiter"],
+  },
+  {
+    status: "requesting waiter",
+    table: "Mesa 05",
+    ...STATUS_CONFIGS["requesting waiter"],
+  },
+  {
+    status: "requesting waiter",
+    table: "Mesa 06",
+    ...STATUS_CONFIGS["requesting waiter"],
+  },
+  {
+    status: "requesting waiter",
+    table: "Mesa 07",
     ...STATUS_CONFIGS["requesting waiter"],
   },
 ];
 
 export default function WarningBar() {
   return (
-    <div className="flex w-full md:overflow-scroll lg:overflow-hidden">
+    <div className="flex overflow-auto">
       {warnings.map((item) => {
         return (
           <div
+            key={item.table}
             className={classNames(
-              `bg-[${item.background}]`,
-              "py-1 w-full text-center cursor-pointer min-w-fit px-4"
+              item.background,
+              item.textColor,
+              "py-1 min-w-[33.3%] text-center cursor-pointer px-4 flex items-center"
             )}
           >
             <b className={classNames(item.textColor, "text-xs mr-2")}>

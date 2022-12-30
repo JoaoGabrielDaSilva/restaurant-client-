@@ -1,14 +1,14 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
-type SidebarStore = {
+type SideModalStore = {
   isVisible: boolean;
   open: () => void;
   close: () => void;
 };
 
-export const useSideBar = create(
-  persist<SidebarStore>((set) => ({
+export const useSideModal = create(
+  persist<SideModalStore>((set) => ({
     isVisible: false,
     open: () => set({ isVisible: true }),
     close: () => set({ isVisible: false }),

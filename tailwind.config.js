@@ -9,7 +9,17 @@ module.exports = {
       lg: "976px",
       xl: "1440px",
     },
-    extend: {},
+    extend: {
+      keyframes: {
+        mount: {
+          "0%": { transform: "translateY(30px)" },
+          "100%": { transform: "translateY(0px)" },
+        },
+      },
+      animation: {
+        mount: "mount ease",
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };

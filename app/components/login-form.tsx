@@ -13,15 +13,11 @@ type FormData = {
   password: string;
 };
 
-// const signIn = new RemoteSignIn();
-
 const LoginForm = () => {
   const { handleSubmit, register } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
-  console.log(useSession());
 
   const [textVisibility, setTextVisibility] = useState(false);
 
@@ -29,14 +25,14 @@ const LoginForm = () => {
     try {
       setLoading(true);
 
-      await signIn("credentials", { redirect: false }, data);
+      console.log(data);
+      await signIn("credentials", { callbackUrl: "/control" }, data);
 
       // router.push("/dashboard");
       setLoading(false);
     } catch (error) {
       console.log(error);
     }
-    console.log(data);
   };
 
   return (

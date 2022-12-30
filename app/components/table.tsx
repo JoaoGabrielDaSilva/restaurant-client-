@@ -1,38 +1,35 @@
+"use client";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import { differenceInMinutes } from "date-fns";
+import {
+  TableModel,
+  TableStatus,
+} from "../../src/@core/domain/models/table-model";
 import { formatCurrency } from "../../src/utils/format-currency";
 
-type Status =
-  | "waiting for closure"
-  | "on going"
-  | "requesting waiter"
-  | "empty";
+type TableProps = TableModel;
 
-type TableProps = {
-  isActive?: boolean;
-  number: string;
-  startDate?: Date;
-  amount?: number;
-  status: Status;
+type TableInfoProps = {
+  info: string;
 };
 
-const TABLE_STATUS_CLASSES: {
-  [key: string]: {
-    border: string;
-    background: string;
-    lightBackground: string;
-  };
-} = {
+type TableStatusStyles = {
+  border: string;
+  background: string;
+  lightBackground: string;
+};
+
+const TABLE_STATUS_CLASSES: Record<TableStatus, TableStatusStyles> = {
   "waiting for closure": {
     border: "border-green-600",
     background: "bg-green-500",
     lightBackground: "bg-green-50",
   },
   "on going": {
-    border: "border-blue-500",
-    background: "bg-blue-500",
-    lightBackground: "bg-blue-50",
+    border: "border-gray-800",
+    background: "bg-gray-800",
+    lightBackground: "bg-gray-50",
   },
   "requesting waiter": {
     border: "border-orange-300",
@@ -41,27 +38,33 @@ const TABLE_STATUS_CLASSES: {
   },
 };
 
-const TABLE_STATUS_MESSAGES: { [key: string]: string } = {
+const TABLE_STATUS_MESSAGES: Record<TableStatus, string | null> = {
   "waiting for closure": "Aguardando Fechamento",
   "requesting waiter": "Solicitando Garçom",
+  "on going": null,
 };
 
 export default function Table({
-  isActive,
   number,
   startDate,
   amount,
   status,
+  orderSheetId,
 }: TableProps) {
-  const classes = TABLE_STATUS_CLASSES[status];
+  const classes = status ? TABLE_STATUS_CLASSES[status] : null;
+
+  const tableStatusMessage = status ? TABLE_STATUS_MESSAGES[status] : null;
+
+  const hasPeopleIn = !!orderSheetId;
+  const isRequesting = hasPeopleIn && status;
 
   return (
     <div
       className={classNames(
-        isActive && status !== "empty"
+        isRequesting && classes
           ? `${classes.border} ${classes.lightBackground}`
-          : "bg-white",
-        isActive
+          : null,
+        hasPeopleIn
           ? "hover:scale-105 transform ease-in-out duration-200"
           : "border-dashed border-gray-300 ",
         "border-2 aspect-square w-36 h-36 p-3 flex flex-col justify-between cursor-pointer"
@@ -70,10 +73,8 @@ export default function Table({
       <div>
         <div
           className={classNames(
-            isActive && status !== "empty"
-              ? `${classes.background}`
-              : "bg-gray-300",
-            isActive ? "text-white" : "bg-gray-100 text-gray-500",
+            isRequesting && classes ? `${classes.background}` : "bg-gray-200",
+            hasPeopleIn ? "text-white" : "bg-gray-100 text-gray-500",
             " w-fit px-3 py-1"
           )}
         >
@@ -81,18 +82,13 @@ export default function Table({
         </div>
       </div>
       {startDate && amount ? (
-        <div>
-          {!TABLE_STATUS_MESSAGES[status] ? (
+        <div className="text-left text-sm md:text-md">
+          {!tableStatusMessage ? (
             <span>{differenceInMinutes(startDate, new Date())}min</span>
           ) : null}
           <div className="flex justify-between items-end ">
-            {TABLE_STATUS_MESSAGES[status] ? (
-              <span>
-                {TABLE_STATUS_MESSAGES[status].split(" ")[0]}
-                <b className="inline-block">
-                  {TABLE_STATUS_MESSAGES[status].split(" ")[1]}
-                </b>
-              </span>
+            {tableStatusMessage ? (
+              <TableInfo info={tableStatusMessage} />
             ) : (
               <span>
                 R$ <b>{formatCurrency(amount, { showPrefix: false })}</b>
@@ -105,3 +101,14 @@ export default function Table({
     </div>
   );
 }
+
+const TableInfo = ({ info }: TableInfoProps) => {
+  const [firstText, secondText] = info.split(" ");
+
+  return (
+    <span>
+      {firstText}
+      <b className="inline-block">{secondText}</b>
+    </span>
+  );
+};
