@@ -14,8 +14,11 @@ import SideModal from "../../components/side-modal";
 import Table from "../../components/table";
 import Tabs from "../../components/tabs";
 import AnimatedMount from "../../components/animated-mount";
-import { signOut } from "next-auth/react";
 import Modal from "../../components/modal";
+import { motion } from "framer-motion";
+import Tag from "../../components/tag";
+import TableLayout from "../../components/table-layout";
+import { formatCurrency } from "../../../src/utils/format-currency";
 
 const mockOrder: OrderModel = {
   tableNumber: "Mesa 02",
@@ -109,12 +112,9 @@ export default function Page() {
 
   const [selectedTable, setSelectedTable] = useState(null);
 
-  // useEffect(() => {
-  //   signOut();
-  // }, []);
+  const [showOrders, setShowOrders] = useState(false);
 
   const { open: openSideBar } = useSideBar();
-  const { open: openSideModal } = useSideModal();
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -153,8 +153,6 @@ export default function Page() {
     setIsFirstMount(false);
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <div className="overflow-hidden h-screen flex bg-gray-50">
@@ -168,7 +166,10 @@ export default function Page() {
             <div className="mb-2 pr-4 flex justify-between items-center">
               <b className="text-2xl text-gray-800 ">Contas</b>
               <div className="sm:flex items-center justify-end">
-                <Button className="mr-4 hidden sm:block">
+                <Button
+                  className="mr-4 hidden sm:block"
+                  onClick={() => setShowOrders(true)}
+                >
                   Abrir conta sem mesa
                 </Button>
                 <Bars3Icon
@@ -189,16 +190,75 @@ export default function Page() {
               ]}
               onChange={({ section }) => setTableFilter(section)}
             />
-            <button type="button" onClick={() => setIsModalOpen(true)}>
-              Open Modal
-            </button>
 
-            <Modal isOpen={!!selectedTable}>
-              <div className="bg-white absolute bottom-0 left-0 right-0">
-                <button type="button" onClick={() => setSelectedTable(null)}>
-                  Close Modal
-                </button>
-              </div>
+            <Modal
+              isOpen={!!selectedTable}
+              onBackdropClick={() => setSelectedTable(null)}
+            >
+              <motion.div
+                initial={{ translateY: "100%" }}
+                animate={{ translateY: 0 }}
+                exit={{ translateY: "100%" }}
+                transition={{
+                  type: "spring",
+                  duration: 0.2,
+                  bounce: 0,
+                }}
+                className="bg-white absolute bottom-0 left-0 right-0 h-[90%]"
+              >
+                <div className="flex justify-between items-center p-4">
+                  <div className="flex items-center">
+                    <span className="font-bold mr-4">
+                      Mesa {selectedTable?.number}
+                    </span>
+                    <Tag text="#92029" className="mr-4" />
+                    <Tag text="Conta Aberta" className="mr-4" variant="good" />
+                    <Tag
+                      text="Existem pedidos pendentes nessa mesa"
+                      className="mr-4"
+                      variant="warning"
+                    />
+                  </div>
+                  <button onClick={() => setSelectedTable(null)}>
+                    <XMarkIcon className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="px-2">
+                  <Tabs
+                    tabs={[
+                      {
+                        section: "Pedidos",
+                      },
+                      {
+                        section: "Conta",
+                      },
+                    ]}
+                    onChange={() => {}}
+                  />
+                  <TableLayout
+                    className="mt-4"
+                    rows={[
+                      {
+                        name: "A",
+                        price: 20.0,
+                        amount: 5,
+                        get total() {
+                          return formatCurrency(this.price * this.amount);
+                        },
+                      },
+                      {
+                        name: "B",
+                        price: 10.0,
+                        amount: 3,
+                        get total() {
+                          return formatCurrency(this.price * this.amount);
+                        },
+                      },
+                    ]}
+                    cols={["Produto", "Preço", "Quantidade", "Total"]}
+                  />
+                </div>
+              </motion.div>
             </Modal>
 
             {data?.length > 0 ? (
@@ -219,7 +279,7 @@ export default function Page() {
                     )}
                   </div>
 
-                  <div className="flex gap-4 pl-1 pr-4 sm:flex-wrap overflow-auto overflow-y-hidden py-4 max-w-[100vw]">
+                  <div className="flex gap-4 pl-1 pr-4 sm:flex-wrap overflow-auto overflow-y-hidden py-4">
                     {item.data.map((item, index) => (
                       <AnimatedMount
                         key={index}
@@ -244,10 +304,13 @@ export default function Page() {
           </div>
         </div>
 
-        <SideModal>
+        {/* <SideModal
+          isVisible={showOrders}
+          onBackdropClick={() => setShowOrders(false)}
+        >
           <div className="flex justify-between">
             <span className="text-lg font-bold">Pedidos</span>
-            <button onClick={() => {}} className="lg:hidden">
+            <button onClick={() => setShowOrders(false)}>
               <XMarkIcon className="w-6 h-6" />
             </button>
           </div>
@@ -261,7 +324,7 @@ export default function Page() {
               <Order {...item} className="mt-4" />
             </AnimatedMount>
           ))}
-        </SideModal>
+        </SideModal> */}
       </div>
     </>
   );
